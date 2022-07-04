@@ -1,18 +1,18 @@
 class Person {
     constructor(level = 1) {
         this.level = level;
-        calDefaultValue();
+        this.attack = 10;
+        this.defense = 10;
+        this.calDefaultValue();
+        this.job = 0;
         this.weapon = null;
         this.shield = null;
     }
     /** 計算初始數值 */
     calDefaultValue() {
-        this.attack = 10;
-        this.defense = 10;
-        for (let i = 1; i < this.level; i++) {
-            this.attack = this.attack + 3;
-            this.defense = this.defense + 1;
-        }
+        this.attack = 10 + (this.level - 1) * 3;
+        this.defense = 10 + (this.level - 1) * 2;
+
     }
     /** 裝備武器 */
     setWeapon(weapon) {
@@ -33,38 +33,36 @@ class Person {
         let defaultAttack = this.attack;
         let defaultDefense = this.defense;
         if (this.weapon) {
-            defaultAttack = defaultAttack + this.weapon.attack;
-            defaultDefense = defaultDefense + this.weapon.defense;
-            for (let i = 0; i < this.level; i++) {
-                defaultAttack = defaultAttack + this.weapon.lvlUpAttack
-                defaultDefense = defaultDefense + this.weapon.lvlUpdefense
-            }
+            defaultAttack += this.weapon.cal(this.level)[0]
+            defaultDefense += this.weapon.cal(this.level)[1]
         }
         if (this.shield) {
-            defaultAttack = defaultAttack + this.shield.attack;
-            defaultDefense = defaultDefense + this.shield.defense;
-            for (let i = 0; i < this.level; i++) {
-                defaultAttack = defaultAttack + this.shield.lvlUpAttack
-                defaultDefense = defaultDefense + this.shield.lvlUpdefense
-            }
+            defaultAttack += this.shield.cal(this.level)[0]
+            defaultDefense += this.shield.cal(this.level)[1]
         }
-        return defaultAttack, defaultDefense;
+        return [defaultAttack, defaultDefense];
     }
 
     /** 查看屬性 */
     viewStatus() {
-        let attack, defense = calValue();
-        return this.level, attack, defense;
+        let attack = this.calValue()[0];
+        let defense = this.calValue()[1];
+        return [this.level, attack, defense];
     }
 }
 
 class Equipment {
-    constructor(attack, defense, lvlUpAttack, lvlUpdefense) {
+    constructor(attack, defense, lvlUpAttack, lvlUpdefense, name) {
         this.attack = attack;
         this.defense = defense;
         this.lvlUpAttack = lvlUpAttack;
         this.lvlUpdefense = lvlUpdefense;
+        this.name = name;
     }
+    cal(level) {
+        return [this.attack + this.lvlUpAttack * (level - 1), this.defense + this.lvlUpdefense * (level - 1)];
+    }
+
 }
 /** 武器 */
 class Weapon extends Equipment {
@@ -79,3 +77,17 @@ class Shield extends Equipment {
         super(attack, defense, lvlUpAttack, lvlUpdefense);
     }
 }
+
+class Sword extends Weapon {
+    constructor(attack, defense, lvlUpAttack, lvlUpdefense) {
+        super(attack, defense, lvlUpAttack, lvlUpdefense);
+    }
+
+}
+
+let a = new Person(3)
+a.setWeapon(new Weapon(3, 1, 1, 1, '斧'))
+a.setShield(new Shield(0, 16, 0, 3, '盾'))
+console.log(a.viewStatus())
+a.setWeapon()
+console.log(a.viewStatus())
