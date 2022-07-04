@@ -3,7 +3,13 @@
  * weapon 武器裝備 型態只能 Weapon or null
  * shield 防禦裝備 型態只能 Shield or null
  */
-class Person {
+ class Person {
+    level: number;
+    attack: number;
+    defense: number;
+    job: number;
+    weapon: Weapon | null;
+    shield: Shield | null;
     constructor(level = 1, attack = 10, defense = 10, job = 0, weapon = null, shield = null) {
         this.level = level;
         this.attack = attack;
@@ -19,11 +25,11 @@ class Person {
         this.defense = 10 + (this.level - 1) * 2;
     }
     /** 裝備武器 */
-    setWeapon(weapon) {
+    setWeapon(weapon: Weapon | null) {
         this.weapon = weapon;
     }
     /** 裝備盾牌 */
-    setShield(shield) {
+    setShield(shield: Shield | null) {
         this.shield = shield;
     }
     /** 轉職為劍鬥士 */
@@ -68,8 +74,13 @@ class Person {
  * lvlUpDefense:升級加防禦力
  * type: 裝備種類
  */
-class Equipment {
-    constructor(attack, defense, lvlUpAttack, lvlUpDefense, type) {
+abstract class Equipment {
+    attack: number;
+    defense: number;
+    lvlUpAttack: number;
+    lvlUpDefense: number;
+    type: number;
+    constructor(attack: number, defense: number, lvlUpAttack: number, lvlUpDefense: number, type: number) {
         this.attack = attack;
         this.defense = defense;
         this.lvlUpAttack = lvlUpAttack;
@@ -77,7 +88,7 @@ class Equipment {
         this.type = type;
     }
     /** 計算 */
-    cal(level, job) { }
+    abstract cal(level: number, job: number): number[]
 
 }
 /** 
@@ -85,10 +96,10 @@ class Equipment {
  * type 0 = 劍; 1 = 斧頭
  */
 class Weapon extends Equipment {
-    constructor(attack, defense, lvlUpAttack, lvlUpDefense, type) {
+    constructor(attack: number, defense: number, lvlUpAttack: number, lvlUpDefense: number, type: number) {
         super(attack, defense, lvlUpAttack, lvlUpDefense, type);
     }
-    cal(level, job) {
+    cal(level: number, job: number) {
         let attack = 0;
         let defense = this.defense + this.lvlUpDefense * (level - 1);
         if (job == 1 && this.type == 0) {
@@ -104,10 +115,11 @@ class Weapon extends Equipment {
  * type  0 = 盾; 1 = 其他
  */
 class Shield extends Equipment {
-    constructor(attack, defense, lvlUpAttack, lvlUpDefense, type) {
+    constructor(attack: number, defense: number, lvlUpAttack: number, lvlUpDefense: number, type: number) {
         super(attack, defense, lvlUpAttack, lvlUpDefense, type);
+        // type 0 = 盾; 1 = 其他
     }
-    cal(level, job) {
+    cal(level: number, job: number) {
         let attack = this.attack + this.lvlUpAttack * (level - 1);
         let defense = 0;
         if (job == 2 && this.type == 0) {
@@ -121,7 +133,9 @@ class Shield extends Equipment {
 
 
 let a = new Person(3)
-a.setWeapon(new Weapon(12, 0, 4, 0, 1))
-a.setShield(new Shield(0, 16, 0, 3))
+a.setWeapon(new Weapon(12, 0, 4, 0, 0))
+a.setShield(new Shield(0, 16, 0, 3, 0))
 a.changeGladiator();
+console.log(a.viewStatus())
+a.setWeapon(null)
 console.log(a.viewStatus())
