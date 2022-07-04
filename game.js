@@ -106,7 +106,6 @@ class Weapon extends Equipment {
 class Shield extends Equipment {
     constructor(attack, defense, lvlUpAttack, lvlUpDefense, type) {
         super(attack, defense, lvlUpAttack, lvlUpDefense, type);
-        // type 0 = 盾; 1 = 其他
     }
     cal(level, job) {
         let attack = this.attack + this.lvlUpAttack * (level - 1);
